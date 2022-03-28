@@ -16,6 +16,17 @@ class UserSerializer(serializers.ModelSerializer):
         """Создает пользователя с зашифрованным паролем и возвращает его"""
         return get_user_model().objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        """Обновляет пользователя, правильно установив пароль и вернув его"""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+
 
 class AuthTokenSerializer(serializers.Serializer):
     """Сериализатор для аутентификации пользователя"""
@@ -42,3 +53,5 @@ class AuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
