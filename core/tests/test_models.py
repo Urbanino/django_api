@@ -1,6 +1,12 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 # Импортируем данную функцию для получения последней актуальной версии модели пользователя (т.к. мы ее будем менять)
+from core import models # импортируем модели
+
+
+def sample_user(email='test@admin.com', password='testpass'):
+    """Создает пользователя"""
+    return get_user_model().objects.create_user(email, password)
 
 
 class ModelTest(TestCase):
@@ -22,4 +28,14 @@ class ModelTest(TestCase):
         # py manage.py test   Запускаем тесты с помощью этой комманды
 
         # переходим в модели и прописываем изменнения для пользователей
+
+    def test_tag_str(self):
+        """Тест на текстовое представление модели"""
+        tag = models.Tag.objects.create(
+            user=sample_user(),
+            name='Рыба'
+        )
+
+        self.assertEqual(str(tag), tag.name)
+
 
